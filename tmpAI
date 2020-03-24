@@ -1,0 +1,73 @@
+
+% direction = 0 --> boat moves from left to right.
+% direction = 1 --> boat moves from right to left.
+
+direction(0).
+leftSide([3,3]).
+rightSide([0,0]).
+
+:- dynamic leftSide/1.
+:- dynamic rightSide/1.
+:- dynamic direction/1.
+
+
+game([]):-!.
+game(H|T):-
+	move(H, direction, rightSide, leftSide),
+	isSafe(rightSide, leftSide),
+	rightSide = [3, 0],
+	leftSide = [0, 3],
+	game(T).
+
+move([M, C]), D, [R1, R2], [L1, L2]):-
+	D = 0,
+	Tmp is M + C,
+	Tmp < 3,
+	Tmp > 0,
+	(M < L1 ; M = L1),
+	(C < L2 ; C = L2),
+	R1 is R1 + M,
+	R2 is R2 + C,
+	L1 is L1 - M,
+	L2 is L2 - c,
+	updateRS([R1, R2]),
+	updateLS([L1, L2]),
+	updateDirection(D).
+	
+move([M, C]), D, [R1, R2], [L1, L2]):-
+	D = 1,
+	Tmp is M + C,
+	Tmp < 3,
+	Tmp > 0,
+	(M < R1 ; M = R1),
+	(C < R2 ; C = R2),
+	R1 is R1 - M,
+	R2 is R2 - C,
+	L1 is L1 + M,
+	L2 is L2 + c,
+	updateRS([R1, R2]),
+	updateLS([L1, L2]),
+	updateDirection(D).
+
+isSafe([R1, R2], [L1, L2]):-
+	(R1 > R2 ; R1 = R2),
+	(L1 > L2 ; L1 = L2).
+
+updateRS(NewRS):-
+	retract(rightSide(OldRS)),
+	assert(rightSide(NewRS)).
+
+updateLS(NewLS):-
+	retract(leftSide(OldLS)),
+	assert(leftSide(NewLS)).
+	
+updateDirection(D):-
+	D = 0,
+	retract(direction(OldD)),
+	assert(direction(1)).
+
+updateDirection(D):-
+	D = 1,
+	retract(direction(OldD)),
+	assert(direction(0)).
+

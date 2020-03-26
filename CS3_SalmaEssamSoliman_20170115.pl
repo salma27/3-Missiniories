@@ -10,22 +10,33 @@
 :- dynamic rightSide/1.
 :- dynamic direction/1.
 
-rightt([0, 0]).
-leftt([3, 3]).
-dd(0).
+%rightt([0, 0]).
+%leftt([3, 3]).
+%dir(0).
+
+rightSide([0, 0]).
+leftSide([3, 3]).
+direction(0).
+
 input([]):-!, false.
 input(L):-
-	rightt(InitialR),
-	leftt(InitialL),
-	dd(Dir),
+	rightSide(InitialR),
+	leftSide(InitialL),
+	direction(Dir),
+	%rightSide is InitialR,
+	%leftSide is InitialL,
+	%direction is Dir,
 	game(L, Dir, InitialR, InitialL).
 	
 game([], _, [3, 0], [0, 3]):-!.
 game([H|T], Direction, RightSide, LeftSide):-
 	move(H, Direction, RightSide, LeftSide),
-	isSafe(RightSide, LeftSide),
+	rightSide(R),
+	write(R),
+	leftSide(L),
+	isSafe(R, L),(
 	(rightSide = [3, 0], leftSide = [0, 3]);
-	game(T, direction, rightSide, leftSide).
+	game(T, direction, rightSide, leftSide)).
 
 move([M, C], D, [R1, R2], [L1, L2]):-
 	D = 0,
